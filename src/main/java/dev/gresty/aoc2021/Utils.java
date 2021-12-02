@@ -19,7 +19,7 @@ public class Utils {
         return Files.lines(Path.of(resource.toURI()));
     }
 
-    public static void runInt(Function<IntStream, Integer> function, String filename) {
+    public static void withInts(Function<IntStream, Integer> function, String filename) {
         int result = function.apply(streamInput(filename).mapToInt(Integer::parseInt));
         System.out.println("Result: " + result);
     }

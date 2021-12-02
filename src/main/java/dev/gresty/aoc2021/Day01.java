@@ -2,14 +2,14 @@ package dev.gresty.aoc2021;
 
 import java.util.stream.IntStream;
 
-import static dev.gresty.aoc2021.Utils.runInt;
+import static dev.gresty.aoc2021.Utils.withInts;
 import static java.lang.Math.floorMod;
 
 public class Day01 {
 
     public static void main(String[] args) {
-        runInt(Day01::day01a, "day01.txt");
-        runInt(Day01::day01b, "day01.txt");
+        withInts(Day01::day01a, "day01.txt");
+        withInts(Day01::day01b, "day01.txt");
     }
 
     static int day01a(IntStream input) {
