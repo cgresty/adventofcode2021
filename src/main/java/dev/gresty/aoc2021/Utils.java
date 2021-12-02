@@ -24,4 +24,9 @@ public class Utils {
         System.out.println("Result: " + result);
     }
 
+    public static void withStrings(Function<Stream<String>, Integer> function, String filename) {
+        int result = function.apply(streamInput(filename));
+        System.out.println("Result: " + result);
+    }
+
 }
