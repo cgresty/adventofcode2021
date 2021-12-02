@@ -3,7 +3,7 @@ package dev.gresty.aoc2021;
 import java.util.stream.IntStream;
 
 import static dev.gresty.aoc2021.Utils.runInt;
-import static java.util.stream.IntStream.range;
+import static java.lang.Math.floorMod;
 
 public class Day01 {
 
@@ -14,33 +14,27 @@ public class Day01 {
 
     static int day01a(IntStream input) {
         Counter counter = new Counter(1);
-        input.forEach(counter::submit);
-        return counter.count;
+        return input.map(counter::submit).sum();
     }
 
     static int day01b(IntStream input) {
         Counter counter = new Counter(3);
-        input.forEach(counter::submit);
-        return counter.count;
+        return input.map(counter::submit).sum();
     }
 
     private static class Counter {
-        final int size;
         final int[] w;
-        int ok;
-        int count = 0;
+        int idx;
 
         Counter(int windowSize) {
-            size = windowSize;
-            w = new int[size + 1];
-            ok = -size;
+            w = new int[windowSize + 1];
+            idx = -windowSize;
         }
 
         // To compare A+B+C to B+C+D, only need to compare A to D.
-        void submit(int value) {
-            w[size] = value;
-            if (++ok > 0 && w[size] > w[0]) count++;
-            range(0, size).forEach(i -> w[i] = w[i + 1]);
+        int submit(int value) {
+            w[floorMod(idx, w.length)] = value;
+            return (++idx > 0 && value > w[floorMod(idx, w.length)]) ? 1 : 0;
         }
     }
 }

@@ -1,6 +1,6 @@
 package dev.gresty.aoc2021;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 
@@ -8,7 +8,7 @@ import static dev.gresty.aoc2021.Day01.day01a;
 import static dev.gresty.aoc2021.Day01.day01b;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Day01Test {
+class Day01Test {
 
     @Test
     public void testDay01a() {
@@ -34,4 +34,5 @@ public class Day01Test {
                 263
                 """.lines().mapToInt(Integer::parseInt);
     }
+
 }
