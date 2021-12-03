@@ -4,23 +4,23 @@ import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
 
-import static dev.gresty.aoc2021.Day03.day03a;
-import static dev.gresty.aoc2021.Day03.day03b;
+import static dev.gresty.aoc2021.Day03.part1;
+import static dev.gresty.aoc2021.Day03.part2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Day03Test {
 
     @Test
-    public void testDay03a() {
-        assertThat(day03a(testInput())).isEqualTo(198);
+    public void testPart1() {
+        assertThat(part1(input())).isEqualTo(198);
     }
 
     @Test
-    public void testDay03b() {
-        assertThat(day03b(testInput())).isEqualTo(230);
+    public void testPart2() {
+        assertThat(part2(input())).isEqualTo(230);
     }
 
-    private Stream<String> testInput() {
+    private Stream<String> input() {
         return """
                 00100
                 11110

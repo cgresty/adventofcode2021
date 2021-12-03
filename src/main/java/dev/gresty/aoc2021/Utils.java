@@ -19,19 +19,13 @@ public class Utils {
         return Files.lines(Path.of(resource.toURI()));
     }
 
-    public static void withInts(Function<IntStream, Integer> function, String filename) {
-        int result = function.apply(streamInput(filename).mapToInt(Integer::parseInt));
+    public static <T> void withInts(Function<IntStream, T> function, String filename) {
+        T result = function.apply(streamInput(filename).mapToInt(Integer::parseInt));
         System.out.println("Result: " + result);
     }
 
-    public static void withStrings(Function<Stream<String>, Integer> function, String filename) {
-        int result = function.apply(streamInput(filename));
+    public static <T> void withStrings(Function<Stream<String>, T> function, String filename) {
+        T result = function.apply(streamInput(filename));
         System.out.println("Result: " + result);
     }
-
-    public static void stringsToLong(Function<Stream<String>, Long> function, String filename) {
-        long result = function.apply(streamInput(filename));
-        System.out.println("Result: " + result);
-    }
-
 }

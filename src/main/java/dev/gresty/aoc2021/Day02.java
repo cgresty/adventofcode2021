@@ -10,17 +10,17 @@ import static dev.gresty.aoc2021.Utils.withStrings;
 public class Day02 {
 
     public static void main(String[] args) {
-        withStrings(Day02::day02a, "day02.txt");
-        withStrings(Day02::day02b, "day02.txt");
+        withStrings(Day02::part1, "day02");
+        withStrings(Day02::part2, "day02");
     }
 
-    public static int day02a(Stream<String> input) {
+    public static int part1(Stream<String> input) {
         CourseReader reader = new CourseReader(CommandA::valueOf);
         input.forEach(reader::submit);
         return reader.sub.depth * reader.sub.horizontal;
     }
 
-    public static int day02b(Stream<String> input) {
+    public static int part2(Stream<String> input) {
         CourseReader reader = new CourseReader(CommandB::valueOf);
         input.forEach(reader::submit);
         return reader.sub.depth * reader.sub.horizontal;

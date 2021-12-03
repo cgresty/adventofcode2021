@@ -8,16 +8,16 @@ import static java.lang.Math.floorMod;
 public class Day01 {
 
     public static void main(String[] args) {
-        withInts(Day01::day01a, "day01.txt");
-        withInts(Day01::day01b, "day01.txt");
+        withInts(Day01::part1, "day01");
+        withInts(Day01::part2, "day01");
     }
 
-    static int day01a(IntStream input) {
+    static int part1(IntStream input) {
         Counter counter = new Counter(1);
         return input.map(counter::submit).sum();
     }
 
-    static int day01b(IntStream input) {
+    static int part2(IntStream input) {
         Counter counter = new Counter(3);
         return input.map(counter::submit).sum();
     }
