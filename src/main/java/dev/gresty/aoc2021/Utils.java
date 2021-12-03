@@ -29,4 +29,9 @@ public class Utils {
         System.out.println("Result: " + result);
     }
 
+    public static void stringsToLong(Function<Stream<String>, Long> function, String filename) {
+        long result = function.apply(streamInput(filename));
+        System.out.println("Result: " + result);
+    }
+
 }
