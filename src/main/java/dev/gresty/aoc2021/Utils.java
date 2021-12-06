@@ -8,6 +8,7 @@ import lombok.ToString;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,6 +34,13 @@ public class Utils {
 
     public static <T> void withStrings(Function<Stream<String>, T> function, String filename) {
         T result = function.apply(streamInput(filename));
+        System.out.println("Result: " + result);
+    }
+
+    public static<T> void withFirstLineInts(Function<IntStream, T> function, String filename) {
+        IntStream intStream = Arrays.stream(streamInput(filename).findFirst().get().split(","))
+                .mapToInt(Integer::parseInt);
+        T result = function.apply(intStream);
         System.out.println("Result: " + result);
     }
 
