@@ -2,7 +2,8 @@ package dev.gresty.aoc2021;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import static dev.gresty.aoc2021.Day06.part1;
 import static dev.gresty.aoc2021.Day06.part2;
@@ -20,10 +21,10 @@ class Day06Test {
         assertThat(part2(input())).isEqualTo(26984457539L);
     }
 
-    private Stream<String> input() {
-        return """
+    private IntStream input() {
+        return Arrays.stream("""
                 3,4,3,1,2
-                """.lines();
+                """.split(",")).map(String::trim).mapToInt(Integer::parseInt);
     }
 
 }

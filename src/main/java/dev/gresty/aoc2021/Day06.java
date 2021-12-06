@@ -5,9 +5,12 @@ import java.util.stream.IntStream;
 
 import static dev.gresty.aoc2021.Utils.withFirstLineInts;
 import static java.util.stream.IntStream.range;
-import static java.util.stream.IntStream.rangeClosed;
 
 public class Day06 {
+
+    static final int GESTATION = 7;
+    static final int MATURATION = 2;
+    static final int LIFECYCLE = MATURATION + GESTATION;
 
     public static void main(String[] args) {
         withFirstLineInts(Day06::part1, "day06");
@@ -23,15 +26,13 @@ public class Day06 {
     }
 
     public static long simulate(IntStream input, int days) {
-        long[] fishByTimer = new long[9];
+        long[] fishByTimer = new long[LIFECYCLE];
         input.forEach(i -> fishByTimer[i]++);
-        rangeClosed(1, days)
-                .forEach(day -> {
-                    long spawning = fishByTimer[0];
-                    range(0, 8).forEach(i -> fishByTimer[i] = fishByTimer[i+1]);
-                    fishByTimer[6] += spawning;
-                    fishByTimer[8] = spawning;
-                });
+        range(0, days).forEach(day -> { // Use day to index a circular array.
+            // The spawning fish count at (day +) 0 automatically becomes the new fish count at (day +) 9
+            // The spawning fish get added back in at (day +) 7 to start their new gestation period.
+            fishByTimer[(day + GESTATION) % LIFECYCLE] += fishByTimer[day % LIFECYCLE];
+        });
         return Arrays.stream(fishByTimer).sum();
     }
 
