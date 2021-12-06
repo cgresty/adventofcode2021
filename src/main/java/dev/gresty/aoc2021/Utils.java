@@ -1,6 +1,9 @@
 package dev.gresty.aoc2021;
 
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -27,5 +30,13 @@ public class Utils {
     public static <T> void withStrings(Function<Stream<String>, T> function, String filename) {
         T result = function.apply(streamInput(filename));
         System.out.println("Result: " + result);
+    }
+
+    @RequiredArgsConstructor
+    @EqualsAndHashCode
+    @ToString
+    static class Point2 {
+        final int x;
+        final int y;
     }
 }
