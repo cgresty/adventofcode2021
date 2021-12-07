@@ -38,10 +38,20 @@ public class Utils {
     }
 
     public static<T> void withFirstLineInts(Function<IntStream, T> function, String filename) {
-        IntStream intStream = Arrays.stream(streamInput(filename).findFirst().get().split(","))
-                .mapToInt(Integer::parseInt);
+        IntStream intStream = intStreamOf(streamInput(filename).findFirst().get());
         T result = function.apply(intStream);
         System.out.println("Result: " + result);
+    }
+
+    public static<T> void withIntArray(Function<int[], T> function, String filename) {
+        int[] intArray = intStreamOf(streamInput(filename).findFirst().get()).toArray();
+        T result = function.apply(intArray);
+        System.out.println("Result: " + result);
+    }
+
+    public static IntStream intStreamOf(String lineOfCommaSeparatedInts) {
+        return Arrays.stream(lineOfCommaSeparatedInts.split(","))
+                .mapToInt(Integer::parseInt);
     }
 
     @RequiredArgsConstructor

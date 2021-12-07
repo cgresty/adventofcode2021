@@ -2,11 +2,11 @@ package dev.gresty.aoc2021;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import static dev.gresty.aoc2021.Day06.part1;
 import static dev.gresty.aoc2021.Day06.part2;
+import static dev.gresty.aoc2021.Utils.intStreamOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Day06Test {
@@ -22,9 +22,7 @@ class Day06Test {
     }
 
     private IntStream input() {
-        return Arrays.stream("""
-                3,4,3,1,2
-                """.split(",")).map(String::trim).mapToInt(Integer::parseInt);
+        return intStreamOf("3,4,3,1,2");
     }
 
 }
