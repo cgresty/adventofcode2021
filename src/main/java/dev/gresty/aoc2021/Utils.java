@@ -1,6 +1,5 @@
 package dev.gresty.aoc2021;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -39,13 +38,13 @@ public class Utils {
     }
 
     public static<T> void withFirstLineInts(Function<IntStream, T> function, String filename) {
-        IntStream intStream = intStreamOf(streamInput(filename).findFirst().get());
+        IntStream intStream = intStreamOf(streamInput(filename).findFirst().orElse("Failed to read first line"));
         T result = function.apply(intStream);
         System.out.println("Result: " + result);
     }
 
     public static<T> void withIntArray(Function<int[], T> function, String filename) {
-        int[] intArray = intStreamOf(streamInput(filename).findFirst().get()).toArray();
+        int[] intArray = intStreamOf(streamInput(filename).findFirst().orElse("Failed to read first line")).toArray();
         T result = function.apply(intArray);
         System.out.println("Result: " + result);
     }
@@ -55,12 +54,24 @@ public class Utils {
                 .mapToInt(Integer::parseInt);
     }
 
-    @RequiredArgsConstructor
     @EqualsAndHashCode
     @ToString
     static class IntPair {
         final int x;
         final int y;
+
+        private IntPair(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        int row() {
+            return y;
+        }
+
+        int col() {
+            return x;
+        }
 
         IntPair add(IntPair other) {
             return new IntPair(x + other.x, y + other.y);
@@ -81,6 +92,14 @@ public class Utils {
         static IntPair of(String asString) {
             String[] values = asString.split(",");
             return new IntPair(parseInt(values[0]), parseInt(values[1]));
+        }
+
+        static IntPair rowCol(int row, int col) {
+            return new IntPair(col, row);
+        }
+
+        static IntPair xy(int x, int y) {
+            return new IntPair(x, y);
         }
     }
 
