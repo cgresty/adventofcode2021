@@ -1,5 +1,6 @@
 package dev.gresty.aoc2021;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -80,6 +81,18 @@ public class Utils {
         static IntPair of(String asString) {
             String[] values = asString.split(",");
             return new IntPair(parseInt(values[0]), parseInt(values[1]));
+        }
+    }
+
+    @RequiredArgsConstructor
+    @EqualsAndHashCode
+    @ToString
+    static class Pair<A, B> {
+        final A a;
+        final B b;
+
+        static <A, B> Pair<A, B> of(A a, B b) {
+            return new Pair<>(a, b);
         }
     }
 
