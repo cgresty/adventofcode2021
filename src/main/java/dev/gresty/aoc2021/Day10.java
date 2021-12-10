@@ -1,10 +1,9 @@
 package dev.gresty.aoc2021;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static dev.gresty.aoc2021.Utils.withStrings;
@@ -29,35 +28,32 @@ public class Day10 {
     }
 
     static class SyntaxChecker {
-        private static final String OPEN = "([{<";
-        private static final String CLOSE = ")]}>";
-        private static final int[] SYNTAX = new int[]{3, 57, 1197, 25137};
+        private static final String BRACKETS = "()[]{}<>";
+        private static final int[] SYNTAX_SCORE = new int[]{3, 57, 1197, 25137};
 
-        Set<Deque<Integer>> autocomplete = new HashSet<>();
+        private final List<Long> autoCompleteScores = new ArrayList<>();
 
         int submit(String line) {
             Deque<Integer> brackets = new ArrayDeque<>();
             for (char c : line.toCharArray()) {
-                int open = OPEN.indexOf(c);
-                if (open > -1) brackets.push(open);
+                int code = BRACKETS.indexOf(c);
+                if (code % 2 == 0) brackets.push(code + 1);
                 else {
-                    int close = CLOSE.indexOf(c);
-                    if (close != brackets.pop()) {
-                        return SYNTAX[close];
+                    if (code != brackets.pop()) {
+                        return SYNTAX_SCORE[code / 2];
                     }
                 }
             }
             if (!brackets.isEmpty()) {
-                autocomplete.add(brackets);
+                autoCompleteScores.add(brackets.stream()
+                        .mapToLong(i -> i / 2 + 1)
+                        .reduce(0, (acc, l) -> acc * 5 + l));
             }
             return 0;
         }
 
         long autocomplete() {
-            List<Long> inOrder = autocomplete.stream()
-                    .map(q -> q.stream()
-                            .mapToLong(i -> i + 1)
-                            .reduce(0, (a, i) -> a * 5 + i))
+            List<Long> inOrder = autoCompleteScores.stream()
                     .sorted()
                     .collect(toList());
             return inOrder.get(inOrder.size() / 2);

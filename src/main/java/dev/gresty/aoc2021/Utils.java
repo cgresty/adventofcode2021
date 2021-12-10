@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -27,26 +28,30 @@ public class Utils {
         return Files.lines(Path.of(resource.toURI()));
     }
 
+    private static <T> void report(Supplier<T> function) {
+        long start = System.currentTimeMillis();
+        T result = function.get();
+        long millis = System.currentTimeMillis() - start;
+        System.out.println("Result: " + result + " (" + millis + "ms)");
+
+    }
+
     public static <T> void withInts(Function<IntStream, T> function, String filename) {
-        T result = function.apply(streamInput(filename).mapToInt(Integer::parseInt));
-        System.out.println("Result: " + result);
+        report(() -> function.apply(streamInput(filename).mapToInt(Integer::parseInt)));
     }
 
     public static <T> void withStrings(Function<Stream<String>, T> function, String filename) {
-        T result = function.apply(streamInput(filename));
-        System.out.println("Result: " + result);
+        report(() -> function.apply(streamInput(filename)));
     }
 
     public static<T> void withFirstLineInts(Function<IntStream, T> function, String filename) {
         IntStream intStream = intStreamOf(streamInput(filename).findFirst().orElse("Failed to read first line"));
-        T result = function.apply(intStream);
-        System.out.println("Result: " + result);
+        report(() -> function.apply(intStream));
     }
 
     public static<T> void withIntArray(Function<int[], T> function, String filename) {
         int[] intArray = intStreamOf(streamInput(filename).findFirst().orElse("Failed to read first line")).toArray();
-        T result = function.apply(intArray);
-        System.out.println("Result: " + result);
+        report(() -> function.apply(intArray));
     }
 
     public static IntStream intStreamOf(String lineOfCommaSeparatedInts) {
