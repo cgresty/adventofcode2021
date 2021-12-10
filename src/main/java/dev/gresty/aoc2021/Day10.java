@@ -19,8 +19,7 @@ public class Day10 {
 
     public static int part1(Stream<String> input) {
         SyntaxChecker checker = new SyntaxChecker();
-        input.forEach(checker::submit);
-        return checker.syntax;
+        return input.mapToInt(checker::submit).sum();
     }
 
     public static long part2(Stream<String> input) {
@@ -34,10 +33,9 @@ public class Day10 {
         private static final String CLOSE = ")]}>";
         private static final int[] SYNTAX = new int[]{3, 57, 1197, 25137};
 
-        int syntax;
-        Set<Long> autocomplete = new HashSet<>();
+        Set<Deque<Integer>> autocomplete = new HashSet<>();
 
-        void submit(String line) {
+        int submit(String line) {
             Deque<Integer> brackets = new ArrayDeque<>();
             for (char c : line.toCharArray()) {
                 int open = OPEN.indexOf(c);
@@ -45,20 +43,23 @@ public class Day10 {
                 else {
                     int close = CLOSE.indexOf(c);
                     if (close != brackets.pop()) {
-                        syntax += SYNTAX[close];
-                        return;
+                        return SYNTAX[close];
                     }
                 }
             }
             if (!brackets.isEmpty()) {
-                autocomplete.add(brackets.stream()
-                        .mapToLong(i -> i + 1)
-                        .reduce(0, (a, i) -> 5 * a + i));
+                autocomplete.add(brackets);
             }
+            return 0;
         }
 
         long autocomplete() {
-            List<Long> inOrder = autocomplete.stream().sorted().collect(toList());
+            List<Long> inOrder = autocomplete.stream()
+                    .map(q -> q.stream()
+                            .mapToLong(i -> i + 1)
+                            .reduce(0, (a, i) -> a * 5 + i))
+                    .sorted()
+                    .collect(toList());
             return inOrder.get(inOrder.size() / 2);
         }
     }
