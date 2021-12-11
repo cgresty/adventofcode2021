@@ -1,14 +1,15 @@
 package dev.gresty.aoc2021;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static dev.gresty.aoc2021.Utils.withStrings;
+import static java.util.Arrays.stream;
 import static java.util.stream.IntStream.range;
+import static java.util.stream.IntStream.rangeClosed;
 
 public class Day11 {
 
@@ -18,22 +19,51 @@ public class Day11 {
     }
 
     public static int part1(Stream<String> input) {
-        OctopusSim1 sim = new OctopusSim1(10, input.collect(Collectors.joining()));
+        OctopusSim sim = new OctopusSim(10, input.collect(Collectors.joining()));
         return sim.simulate100();
     }
 
     public static long part2(Stream<String> input) {
-        OctopusSim1 sim = new OctopusSim1(10, input.collect(Collectors.joining()));
+        OctopusSim sim = new OctopusSim(10, input.collect(Collectors.joining()));
         return sim.simulateUntilSynced();
     }
 
-    static class OctopusSim1 {
+    static class OctopusSim {
         final int size;
-        final long[] octopi;
+        final int[] octopusEnergy;
 
-        OctopusSim1(int size, String octopi) {
+        // Handy lookup tables
+        final int[][][] neighbourOffsets; // avoids recalculating neighbours every.single.time.
+        final int[] mapSizeTo3; // So we can map our full size octopus group to the 3x3 neighbour cases
+
+        OctopusSim(int size, String octopi) {
             this.size = size;
-            this.octopi = octopi.chars().mapToLong(c -> c - '0').toArray();
+            this.octopusEnergy = octopi.chars().map(c -> c - '0').toArray();
+            this.neighbourOffsets = range(0, 3).mapToObj(x ->
+                            range(0, 3).mapToObj(y -> calcNeighbours(x, y))
+                                    .toArray(int[][]::new))
+                    .toArray(int[][][]::new);
+            this.mapSizeTo3 = range(0, size)
+                    .map(i -> i == 0 ? 0 : i == size - 1 ? 2 : 1)
+                    .toArray();
+        }
+
+        private int[] calcNeighbours(int x, int y) {
+            return rangeClosed(-1, 1)
+                    .flatMap(dx ->
+                            rangeClosed(-1, 1)
+                                    .filter(dy -> dx != 0 || dy != 0)
+                                    .filter(dy -> valid3(x + dx, y + dy))
+                                    .map(dy -> loc(dx, dy)))
+                    .toArray();
+        }
+
+        private boolean valid3(int x, int y) {
+            return x >= 0 && y >= 0 && x < 3 && y < 3;
+        }
+
+        private int loc(int x, int y) {
+            return y * size + x;
         }
 
         int simulate100() {
@@ -42,17 +72,15 @@ public class Day11 {
 
         int simulateUntilSynced() {
             int i = 0;
-            do {
-                i++;
-            } while (step(i) < 100);
+            do { i++; } while (step(i) < 100);
             return i;
         }
 
-        int step(int iteration) {
+        private int step(int iteration) {
             int[] count = new int[1];
             Queue<Integer> flashed = new ArrayDeque<>();
             locations().forEach(l -> {
-                if (++octopi[l] == 10) {
+                if (++octopusEnergy[l] == 10) {
                     flashed.add(l);
                     count[0]++;
                 }
@@ -61,7 +89,7 @@ public class Day11 {
             Integer loc;
             while((loc = flashed.poll()) != null) {
                 neighbours(loc).forEach(n -> {
-                    if (++octopi[n] == 10) {
+                    if (++octopusEnergy[n] == 10) {
                         flashed.add(n);
                         count[0]++;
                     }
@@ -69,37 +97,21 @@ public class Day11 {
             }
 
             locations().forEach(l -> {
-                if (octopi[l] >= 10) {
-                    octopi[l] = 0;
+                if (octopusEnergy[l] >= 10) {
+                    octopusEnergy[l] = 0;
                 }
             });
 
             return count[0];
         }
 
-        IntStream neighbours(int loc) {
-            int[] n = new int[8];
-            int i = 0;
-            for (int y = loc / size -1; y <= loc / size + 1; y++)
-                for (int x = loc % size - 1; x <= loc % size + 1; x++)
-                    if (loc(x, y) != loc && valid(x, y))
-                        n[i++] = loc(x, y);
-
-            return Arrays.stream(n, 0, i);
+        private IntStream neighbours(int loc) {
+            return stream(neighbourOffsets[mapSizeTo3[loc % size]][mapSizeTo3[loc / size]])
+                    .map(dl -> loc + dl);
         }
 
-        IntStream locations() {
+        private IntStream locations() {
             return range(0, size * size);
         }
-
-        boolean valid(int x, int y) {
-            return x >= 0 && y >= 0 && x < size && y < size;
-        }
-
-        int loc(int x, int y) {
-            return y * size + x;
-        }
-
     }
-
 }
