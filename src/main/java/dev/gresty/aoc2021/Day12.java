@@ -2,10 +2,8 @@ package dev.gresty.aoc2021;
 
 import lombok.EqualsAndHashCode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -45,29 +43,21 @@ public class Day12 {
             });
         }
 
-        List<Cave> route = new ArrayList<>();
-        int routeCount;
-
         int findRoutes(Rule rule) {
-            route.clear();
-            routeCount = 0;
-
-            findRoutes(start, rule);
-            return routeCount;
+            return findRoutes(start, rule);
         }
 
-        void findRoutes(Cave cave, Rule rule) {
-            route.add(cave);
+        int findRoutes(Cave cave, Rule rule) {
             if (cave == end) {
-                routeCount++;
-                return;
+                return 1;
             }
             rule.add(cave);
-            cave.routes()
+            int count = cave.next()
                     .filter(rule::canVisit)
-                    .forEach(next -> findRoutes(next, rule));
-            route.remove(route.size() - 1);
+                    .mapToInt(next -> findRoutes(next, rule))
+                    .sum();
             rule.remove(cave);
+            return count;
         }
     }
 
@@ -88,7 +78,7 @@ public class Day12 {
             routes.add(other);
         }
 
-        Stream<Cave> routes() {
+        Stream<Cave> next() {
             return routes.stream();
         }
 
