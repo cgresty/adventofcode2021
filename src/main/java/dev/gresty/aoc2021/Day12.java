@@ -13,8 +13,12 @@ import static dev.gresty.aoc2021.Utils.withStrings;
 public class Day12 {
 
     public static void main(String[] args) {
-        withStrings(Day12::part1, "day12");
-        withStrings(Day12::part2, "day12");
+        for (int i = 0; i < 100; i++) {
+            withStrings(Day12::part1, "day12");
+        }
+        for (int i = 0; i < 100; i++) {
+            withStrings(Day12::part2, "day12");
+        }
     }
 
     public static int part1(Stream<String> input) {
@@ -52,10 +56,12 @@ public class Day12 {
                 return 1;
             }
             rule.add(cave);
-            int count = cave.next()
-                    .filter(rule::canVisit)
-                    .mapToInt(next -> findRoutes(next, rule))
-                    .sum();
+            int count = 0;
+            for (Cave next : cave.routes) {
+                if (rule.canVisit(next)) {
+                    count += findRoutes(next, rule);
+                }
+            }
             rule.remove(cave);
             return count;
         }
@@ -67,7 +73,7 @@ public class Day12 {
         @EqualsAndHashCode.Include
         final String name;
         final boolean small;
-        private final Set<Cave> routes = new HashSet<>();
+        final Set<Cave> routes = new HashSet<>();
 
         Cave(String name) {
             this.name = name;
@@ -76,10 +82,6 @@ public class Day12 {
 
         void addRoute(Cave other) {
             routes.add(other);
-        }
-
-        Stream<Cave> next() {
-            return routes.stream();
         }
 
         @Override
