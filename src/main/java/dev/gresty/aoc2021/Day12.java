@@ -3,9 +3,7 @@ package dev.gresty.aoc2021;
 import lombok.EqualsAndHashCode;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static dev.gresty.aoc2021.Utils.withStrings;
@@ -13,12 +11,8 @@ import static dev.gresty.aoc2021.Utils.withStrings;
 public class Day12 {
 
     public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
-            withStrings(Day12::part1, "day12");
-        }
-        for (int i = 0; i < 100; i++) {
-            withStrings(Day12::part2, "day12");
-        }
+        withStrings(Day12::part1, "day12");
+        withStrings(Day12::part2, "day12");
     }
 
     public static int part1(Stream<String> input) {
@@ -42,9 +36,9 @@ public class Day12 {
                 Cave to = caves.computeIfAbsent(names[1], Cave::new);
                 from.addRoute(to);
                 to.addRoute(from);
-                if (from.name.equals("start")) start = from;
-                if (to.name.equals("end")) end = to;
             });
+            start = caves.get("start");
+            end = caves.get("end");
         }
 
         int findRoutes(Rule rule) {
@@ -57,7 +51,9 @@ public class Day12 {
             }
             rule.add(cave);
             int count = 0;
-            for (Cave next : cave.routes) {
+            Cave next;
+            for (int i = 0; i < cave.numRoutes; i++) {
+                next = cave.routes[i];
                 if (rule.canVisit(next)) {
                     count += findRoutes(next, rule);
                 }
@@ -73,7 +69,9 @@ public class Day12 {
         @EqualsAndHashCode.Include
         final String name;
         final boolean small;
-        final Set<Cave> routes = new HashSet<>();
+        Cave[] routes = new Cave[10];
+        int numRoutes = 0;
+        boolean visited;
 
         Cave(String name) {
             this.name = name;
@@ -81,7 +79,8 @@ public class Day12 {
         }
 
         void addRoute(Cave other) {
-            routes.add(other);
+            if (other.name.equals("start")) return;
+            routes[numRoutes++] = other;
         }
 
         @Override
@@ -97,36 +96,33 @@ public class Day12 {
     }
 
     static class Rule1 implements Rule {
-        Set<Cave> visitedSmall = new HashSet<>();
 
         @Override
         public void add(Cave cave) {
-            if (cave.small)
-                visitedSmall.add(cave);
+            if (cave.small) cave.visited = true;
         }
 
         @Override
         public void remove(Cave cave) {
-            visitedSmall.remove(cave);
+            cave.visited = false;
         }
 
         @Override
         public boolean canVisit(Cave cave) {
-            return !visitedSmall.contains(cave);
+            return !cave.visited;
         }
     }
 
     static class Rule2 implements Rule {
-        Set<Cave> visitedSmall = new HashSet<>();
         Cave twiceVisited;
 
         @Override
         public void add(Cave cave) {
             if (cave.small) {
-                if (visitedSmall.contains(cave)) {
+                if (cave.visited) {
                     twiceVisited = cave;
                 } else {
-                    visitedSmall.add(cave);
+                    cave.visited = true;
                 }
             }
         }
@@ -136,14 +132,13 @@ public class Day12 {
             if (twiceVisited == cave) {
                 twiceVisited = null;
             } else {
-                visitedSmall.remove(cave);
+                cave.visited = false;
             }
         }
 
         @Override
         public boolean canVisit(Cave next) {
-            return !visitedSmall.contains(next) ||
-                    (!next.name.equals("start") && !next.name.equals("end") && twiceVisited == null);
+            return !next.visited || twiceVisited == null;
         }
     }
 
