@@ -20,11 +20,11 @@ public class Day12 {
     }
 
     public static int part1(Stream<String> input) {
-        return new RouteFinder(input).findRoutes();
+        return new RouteFinder(input).findRoutes(new Rule1());
     }
 
     public static long part2(Stream<String> input) {
-        return 0;
+        return new RouteFinder(input).findRoutes(new Rule2());
     }
 
     static class RouteFinder {
@@ -45,30 +45,29 @@ public class Day12 {
             });
         }
 
-        Set<Cave> visitedSmall = new HashSet<>();
         List<Cave> route = new ArrayList<>();
-        List<List<Cave>> routes = new ArrayList<>();
+        int routeCount;
 
-        int findRoutes() {
-            visitedSmall.clear();
+        int findRoutes(Rule rule) {
             route.clear();
-            routes.clear();
+            routeCount = 0;
 
-            findRoutes(start);
-            return routes.size();
+            findRoutes(start, rule);
+            return routeCount;
         }
 
-        void findRoutes(Cave cave) {
+        void findRoutes(Cave cave, Rule rule) {
             route.add(cave);
             if (cave == end) {
-                routes.add(new ArrayList<>(route));
+                routeCount++;
                 return;
             }
-            if (cave.small) visitedSmall.add(cave);
+            rule.add(cave);
             cave.routes()
-                    .filter(next -> !visitedSmall.contains(next))
-                    .forEach(this::findRoutes);
-            visitedSmall.remove(cave);
+                    .filter(rule::canVisit)
+                    .forEach(next -> findRoutes(next, rule));
+            route.remove(route.size() - 1);
+            rule.remove(cave);
         }
     }
 
@@ -91,6 +90,68 @@ public class Day12 {
 
         Stream<Cave> routes() {
             return routes.stream();
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    interface Rule {
+        void add(Cave cave);
+        void remove(Cave cave);
+        boolean canVisit(Cave cave);
+    }
+
+    static class Rule1 implements Rule {
+        Set<Cave> visitedSmall = new HashSet<>();
+
+        @Override
+        public void add(Cave cave) {
+            if (cave.small)
+                visitedSmall.add(cave);
+        }
+
+        @Override
+        public void remove(Cave cave) {
+            visitedSmall.remove(cave);
+        }
+
+        @Override
+        public boolean canVisit(Cave cave) {
+            return !visitedSmall.contains(cave);
+        }
+    }
+
+    static class Rule2 implements Rule {
+        Set<Cave> visitedSmall = new HashSet<>();
+        Cave twiceVisited;
+
+        @Override
+        public void add(Cave cave) {
+            if (cave.small) {
+                if (visitedSmall.contains(cave)) {
+                    twiceVisited = cave;
+                } else {
+                    visitedSmall.add(cave);
+                }
+            }
+        }
+
+        @Override
+        public void remove(Cave cave) {
+            if (twiceVisited == cave) {
+                twiceVisited = null;
+            } else {
+                visitedSmall.remove(cave);
+            }
+        }
+
+        @Override
+        public boolean canVisit(Cave next) {
+            return !visitedSmall.contains(next) ||
+                    (!next.name.equals("start") && !next.name.equals("end") && twiceVisited == null);
         }
     }
 
