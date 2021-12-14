@@ -32,16 +32,15 @@ public class Day14 {
                     })
                     .filter(line -> line.length() == 7)
                     .map(Pair::from)
-                    .collect(Collectors.toMap(Pair::name, pair -> pair));
+                    .collect(Collectors.toMap(pair -> pair.name, pair -> pair));
             insertionRules.forEach((k, v) -> v.setup(insertionRules));
         }
 
         void init() {
-            insertionRules.forEach((k, v) -> v.reset());
+            insertionRules.forEach((k, v) -> v.count = 0);
             for (int i = 0; i < startingPolymer.length() - 1; i++) {
-                insertionRules.get(startingPolymer.substring(i, i + 2)).increment(1);
+                insertionRules.get(startingPolymer.substring(i, i + 2)).count++;
             }
-            insertionRules.forEach((k, v) -> v.update());
         }
 
         long execute(int steps) {
@@ -99,22 +98,14 @@ public class Day14 {
             return new Pair(line.substring(0, 2), line.charAt(6));
         }
 
-        String name() {
-            return name;
-        }
-
         void setup(Map<String, Pair> pairs) {
             insertInto[0] = pairs.get(insertIntoNames[0]);
             insertInto[1] = pairs.get(insertIntoNames[1]);
         }
 
         void insert() {
-            insertInto[0].increment(count);
-            insertInto[1].increment(count);
-        }
-
-        void increment(long extra) {
-            newCount += extra;
+            insertInto[0].newCount += count;
+            insertInto[1].newCount += count;
         }
 
         void update() {
@@ -122,9 +113,5 @@ public class Day14 {
             newCount = 0;
         }
 
-        void reset() {
-            count = 0;
-            newCount = 0;
-        }
     }
 }
