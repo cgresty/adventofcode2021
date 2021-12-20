@@ -44,6 +44,10 @@ public class Utils {
         report(() -> function.apply(streamInput(filename)));
     }
 
+    public static <T> void withString(Function<String, T> function, String filename) {
+        report(() -> function.apply(streamInput(filename).findFirst().orElse("Failed to read first line")));
+    }
+
     public static<T> void withFirstLineInts(Function<IntStream, T> function, String filename) {
         IntStream intStream = intStreamOf(streamInput(filename).findFirst().orElse("Failed to read first line"));
         report(() -> function.apply(intStream));
