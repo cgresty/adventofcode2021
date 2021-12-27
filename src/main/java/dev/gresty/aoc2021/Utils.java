@@ -112,6 +112,37 @@ public class Utils {
         }
     }
 
+    @EqualsAndHashCode
+    @ToString
+    static class IntTriple {
+        final int x;
+        final int y;
+        final int z;
+
+        private IntTriple(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        static IntTriple of(String asString) {
+            String[] values = asString.split(",");
+            return new IntTriple(parseInt(values[0]), parseInt(values[1]), parseInt(values[2]));
+        }
+
+        static IntTriple of(int[] array) {
+            return new IntTriple(array[0], array[1], array[2]);
+        }
+
+        static IntTriple origin() {
+            return new IntTriple(0, 0, 0);
+        }
+
+        int[] toArray() {
+            return new int[] {x, y, z, 1};
+        }
+    }
+
     @RequiredArgsConstructor
     @EqualsAndHashCode
     @ToString
