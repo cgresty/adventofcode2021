@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -42,6 +43,10 @@ public class Utils {
 
     public static <T> void withStrings(Function<Stream<String>, T> function, String filename) {
         report(() -> function.apply(streamInput(filename)));
+    }
+
+    public static <T> void withStringIterator(Function<Iterator<String>, T> function, String filename) {
+        report(() -> function.apply(streamInput(filename).iterator()));
     }
 
     public static <T> void withString(Function<String, T> function, String filename) {
